@@ -1,0 +1,78 @@
+# Base Image: Remote Development Setup
+FROM ubuntu:22.04
+
+# Avoid warnings by switching to noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Setup timezone
+RUN echo 'Etc/UTC' > /etc/timezone && \
+    ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime && \
+    apt-get update && \
+    apt-get install -q -y --no-install-recommends tzdata && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install necessary packages including ca-certificates
+RUN apt-get update && apt-get install -q -y --no-install-recommends \
+    curl \
+    gnupg2 \
+    lsb-release \
+    sudo \
+    ca-certificates \
+    openssh-server \
+    xfce4 \
+    wget \
+    konsole \
+    nano \
+    mesa-utils \
+    nautilus \
+    gpg \
+    git \
+    xdotool \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install VSCode
+RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/keyrings/packages.microsoft.gpg
+RUN sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
+RUN apt-get update && apt-get install -y code && rm -rf /var/lib/apt/lists/*
+
+# Install Xpra
+RUN wget -O "/usr/share/keyrings/xpra.asc" https://xpra.org/xpra.asc
+RUN echo "Types: deb\nURIs: https://xpra.org\nSuites: jammy\nComponents: main\nSigned-By: /usr/share/keyrings/xpra.asc\nArchitectures: amd64 arm64" > /etc/apt/sources.list.d/xpra.sources
+RUN apt-get update && apt-get install -y xpra && rm -rf /var/lib/apt/lists/*
+
+# Setup SSH
+RUN mkdir /var/run/sshd
+RUN echo 'root:password' | chpasswd
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+# Uncomment the AuthorizedKeysFile line to use default settings
+# RUN sed -i 's/#AuthorizedKeysFile/AuthorizedKeysFile/' /etc/ssh/sshd_config
+
+# SSH login fix. Otherwise user is kicked off after login
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+
+# Monkey patch to fix Xpra clipboard issues (originally intended for Xpra@6.1.2, see https://github.com/Xpra-org/xpra-html5/issues/319)
+# Copy the patch script into the image
+COPY patch_xpra_clipboard.sh /usr/local/bin/patch_xpra_clipboard.sh
+# Run the script to patch the Xpra clipboard issue
+RUN chmod +x /usr/local/bin/patch_xpra_clipboard.sh && \
+    /usr/local/bin/patch_xpra_clipboard.sh
+
+# Clean up
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Expose SSH and Xpra ports
+EXPOSE 22 8000
+
+# Create a startup script
+RUN echo '#!/bin/bash\n\
+/usr/sbin/sshd\n\
+if [ -d "/root/repo" ]; then\n\
+  xpra start --start="bash -c \"code --no-sandbox /root/repo --user-data-dir /root/.vscode_user_data && xdotool getactivewindow windowmove 0 0\"" --bind-tcp=0.0.0.0:8000\n\
+else\n\
+  xpra start --start=xterm --bind-tcp=0.0.0.0:8000\n\
+fi\n\
+tail -f /dev/null' > /start.sh && chmod +x /start.sh
+
+# Set the startup script as the entry point
+CMD ["/start.sh"]

@@ -1,0 +1,22 @@
+# ROS Image: Based on the Remote Development Setup
+
+# Use the previously built base image
+FROM rbc_dev_base:latest
+
+# Setup sources.list for ROS 2 and Gazebo
+RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
+
+# Update the package list and install ROS 2 Humble
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ros-humble-desktop \
+    python3-argcomplete \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Gazebo Fortress (which is the version that comes with ROS 2 Humble)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ros-humble-ros-gz \
+    && rm -rf /var/lib/apt/lists/*
+
+# Setup environment
+RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
