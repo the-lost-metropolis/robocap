@@ -47,7 +47,8 @@ fi
 echo -e "${BLUE}Launching Docker container on:${NC}"
 echo -e "${GREEN}SSH port: ${SSH_PORT}${NC}"
 echo -e "${GREEN}Web port: ${WEB_PORT}${NC}"
-echo -e "${GREEN}Access URL: http://${HOSTNAME}:${WEB_PORT}${NC}"
+echo -e "${GREEN}GUI URL: http://${HOSTNAME}:${WEB_PORT}${NC}"
+echo -e "${GREEN}Use ./remote_vscode.sh ${SSH_PORT} ${HOSTNAME} to launch VSCode in the container${NC}"
 echo -e "${GREEN}Using UID: ${HOST_UID}, GID: ${HOST_GID}${NC}"
 
 # Launch the Docker container in the background
