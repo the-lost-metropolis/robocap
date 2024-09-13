@@ -49,9 +49,3 @@ docker run -it --rm \
   -v $(realpath ./):/home/developer/repo \
   -e DISPLAY=:0 \
   rbc_dev_ros:latest
-
-# Pass in host UID / GID for correct file permissions
-# Assign SSH port
-# Assign Xpra web UI port
-# Mount repository
-# Make programs default to Xpra virtual GL
