@@ -3,20 +3,29 @@
 # Use the previously built base image
 FROM rbc_dev_base:latest
 
+# Switch to root user to install packages
+USER root
+
 # Setup sources.list for ROS 2 and Gazebo
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
 RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
 
 # Update the package list and install ROS 2 Humble
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ros-humble-desktop \
+    # ros-humble-desktop \
     python3-argcomplete \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Gazebo Fortress (which is the version that comes with ROS 2 Humble)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ros-humble-ros-gz \
-    && rm -rf /var/lib/apt/lists/*
+# # Install Gazebo Fortress (which is the version that comes with ROS 2 Humble)
+# RUN apt-get update && apt-get install -y --no-install-recommends \
+#     ros-humble-ros-gz \
+#     && rm -rf /var/lib/apt/lists/*
 
-# Setup environment
-RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
+# Setup environment for the non-root user
+RUN echo "source /opt/ros/humble/setup.bash" >> /home/developer/.bashrc
+
+# Switch back to the non-root user
+USER developer
+
+# Set the working directory
+WORKDIR /home/developer
