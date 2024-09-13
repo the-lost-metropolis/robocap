@@ -41,16 +41,12 @@ echo -e "${GREEN}Web port: ${WEB_PORT}${NC}"
 echo -e "${GREEN}Access URL: http://${HOSTNAME}:${WEB_PORT}${NC}"
 echo -e "${GREEN}Using UID: ${HOST_UID}, GID: ${HOST_GID}${NC}"
 
-# Create a named volume for XDG_RUNTIME_DIR
-docker volume create xdg_runtime_dir
-
 # Launch the Docker container
 docker run -it --rm \
   --user ${HOST_UID}:${HOST_GID} \
   -p ${SSH_PORT}:22 \
   -p ${WEB_PORT}:8000 \
   -v $(realpath ./):/home/developer/repo \
-  -v xdg_runtime_dir:/run/user/${HOST_UID} \
   -e DISPLAY=:0 \
   -e HOME=/home/developer \
   rbc_dev_ros:latest
