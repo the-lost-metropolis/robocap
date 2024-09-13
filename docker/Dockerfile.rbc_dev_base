@@ -61,15 +61,26 @@ RUN echo "export DISPLAY=:0" >> /home/$USERNAME/.bashrc && \
 # Expose SSH and Xpra ports
 EXPOSE 22 8000
 
-# Create a startup script
+# Create a startup script with selective permission adjustment
 RUN echo '#!/bin/bash\n\
+# Adjust permissions if necessary\n\
+if [ "$(id -u)" != "1000" ] || [ "$(id -g)" != "1000" ]; then\n\
+    echo "Adjusting permissions..."\n\
+    for item in /home/developer/.*  /home/developer/*; do\n\
+        if [ "$item" != "/home/developer/repo" ] && [ "$item" != "/home/developer/." ] && [ "$item" != "/home/developer/.." ]; then\n\
+            sudo chown -R $(id -u):$(id -g) "$item"\n\
+            sudo chmod -R u+rw "$item"\n\
+        fi\n\
+    done\n\
+fi\n\
+\n\
 sudo /usr/sbin/sshd\n\
 if [ -d "$HOME/repo" ]; then\n\
   xpra start --start="bash -c \"code --no-sandbox $HOME/repo --user-data-dir $HOME/.vscode_user_data && xdotool getactivewindow windowmove 0 0\"" --bind-tcp=0.0.0.0:8000\n\
 else\n\
   xpra start --start=xterm --bind-tcp=0.0.0.0:8000\n\
 fi\n\
-tail -f /dev/null' > /home/$USERNAME/start.sh && chmod +x /home/$USERNAME/start.sh
+tail -f /dev/null' > /home/developer/start.sh && chmod +x /home/developer/start.sh
 
 # Switch to non-root user
 USER $USERNAME
