@@ -8,13 +8,23 @@ if [ "$IS_DEV_CONTAINER" = "true" ]; then
     export _colcon_cd_root=/opt/ros/humble/ # Set colcon_cd root
     source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash # Source colcon_argcomplete
 
+    source_workspace() {
+        if [ -f /home/developer/repo/install/setup.bash ]; then
+            source /home/developer/repo/install/setup.bash
+        fi
+    }
+
     # Wrap colcon such that it always executes in the workspace: /home/developer/repo
     # And that after it finishes, it will source the workspace setup.bash
     colcon() {
         cd /home/developer/repo
         /usr/bin/colcon "$@"
-        if [ -f /home/developer/repo/install/setup.bash ]; then
-            source /home/developer/repo/install/setup.bash
-        fi
+        source_workspace
     }
+
+    clear_workspace() {
+        rm -rf /home/developer/repo/build /home/developer/repo/install /home/developer/repo/log
+    }
+
+    source_workspace
 fi
