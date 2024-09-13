@@ -10,19 +10,22 @@ USER root
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
 RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
 
-# Update the package list and install ROS 2 Humble
+# Update the package list and install ROS 2 Humble, Gazebo, and additional packages.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-humble-desktop \
     python3-argcomplete \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Gazebo Fortress (which is the version that comes with ROS 2 Humble)
-RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-humble-ros-gz \
     && rm -rf /var/lib/apt/lists/*
 
 # Setup environment for the non-root user
 RUN echo "source /opt/ros/humble/setup.bash" >> /home/developer/.bashrc
+
+# Colcon setup
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3-colcon-common-extensions \
+    && rm -rf /var/lib/apt/lists/*
+
+
 
 # Switch back to the non-root user
 USER developer
