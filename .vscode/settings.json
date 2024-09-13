@@ -2,10 +2,8 @@
     "terminal.integrated.profiles.linux": {
     "RBC Shell": {
             "path": "/bin/bash",
-            "args": [
-                "-c", "source .vscode/shell_setup.sh; exec bash"
-            ],
             "color": "terminal.ansiMagenta",
+            "args": ["--init-file", ".vscode/shell_setup.sh"]
         }
     },
     "terminal.integrated.defaultProfile.linux": "RBC Shell"

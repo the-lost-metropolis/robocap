@@ -52,7 +52,7 @@ else
     echo -e "${GREEN}SSH port: ${SSH_PORT}${NC}"
     echo -e "${GREEN}Web port: ${WEB_PORT}${NC}"
     echo -e "${GREEN}GUI URL: http://${HOSTNAME}:${WEB_PORT}${NC}"
-    echo -e "${GREEN}Use ./remote_vscode.sh ${SSH_PORT} ${HOSTNAME} to launch VSCode in the container${NC}"
+    echo -e "${GREEN}Use \"./remote_vscode.sh ${SSH_PORT} ${HOSTNAME}\" to launch VSCode in the container${NC}"
     echo -e "${GREEN}Using UID: ${HOST_UID}, GID: ${HOST_GID}${NC}"
 
     # Launch the Docker container in the background
@@ -66,5 +66,8 @@ else
         $SSH_KEY_MOUNT \
         -e DISPLAY=:0 \
         -e IS_DEV_CONTAINER=true \
+        -e SELF_SSH_PORT=${SSH_PORT} \
+        -e SELF_WEB_PORT=${WEB_PORT} \
+        -e SELF_HOSTNAME=${HOSTNAME} \
         rbc_dev_ros:latest
 fi
