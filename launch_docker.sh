@@ -56,6 +56,7 @@ docker run -it --rm \
     -p ${SSH_PORT}:22 \
     -p ${WEB_PORT}:8000 \
     -v $(realpath ./):/home/developer/repo \
+    -v $(realpath ./docker/start.sh):/home/developer/start.sh \
     $SSH_KEY_MOUNT \
     -e DISPLAY=:0 \
     rbc_dev_ros:latest

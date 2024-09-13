@@ -78,11 +78,7 @@ if [ "$(id -u)" != "1000" ] || [ "$(id -g)" != "1000" ]; then\n\
 fi\n\
 \n\
 sudo /usr/sbin/sshd\n\
-if [ -d "$HOME/repo" ]; then\n\
-  xpra start --start="bash -c \"code --no-sandbox $HOME/repo --user-data-dir $HOME/.vscode_user_data && xdotool getactivewindow windowmove 0 0\"" --bind-tcp=0.0.0.0:8000\n\
-else\n\
-  xpra start --start=xterm --bind-tcp=0.0.0.0:8000\n\
-fi\n\
+xpra start --bind-tcp=0.0.0.0:8000\n\
 tail -f /dev/null' > /home/developer/start.sh && chmod +x /home/developer/start.sh
 
 # Switch to non-root user
