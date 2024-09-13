@@ -12,14 +12,14 @@ RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/r
 
 # Update the package list and install ROS 2 Humble
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    # ros-humble-desktop \
+    ros-humble-desktop \
     python3-argcomplete \
     && rm -rf /var/lib/apt/lists/*
 
-# # Install Gazebo Fortress (which is the version that comes with ROS 2 Humble)
-# RUN apt-get update && apt-get install -y --no-install-recommends \
-#     ros-humble-ros-gz \
-#     && rm -rf /var/lib/apt/lists/*
+# Install Gazebo Fortress (which is the version that comes with ROS 2 Humble)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ros-humble-ros-gz \
+    && rm -rf /var/lib/apt/lists/*
 
 # Setup environment for the non-root user
 RUN echo "source /opt/ros/humble/setup.bash" >> /home/developer/.bashrc

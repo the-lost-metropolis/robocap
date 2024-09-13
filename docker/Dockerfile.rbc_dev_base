@@ -58,6 +58,9 @@ RUN mkdir -p ${XDG_RUNTIME_DIR} && \
 RUN echo "export DISPLAY=:0" >> /home/$USERNAME/.bashrc && \
     echo "export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR}" >> /home/$USERNAME/.bashrc
 
+# Set the default shell to bash for the developer user
+RUN chsh -s /bin/bash $USERNAME
+
 # Expose SSH and Xpra ports
 EXPOSE 22 8000
 
