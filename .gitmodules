@@ -1,0 +1,3 @@
+[submodule "src/omnidirectional_controllers"]
+	path = src/omnidirectional_controllers
+	url = https://github.com/mateusmenezes95/omnidirectional_controllers.git
