@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:property name="distance_to_roller_center" value="0.04645"/>
+
+    <xacro:macro name="inertial_cylinder" params="mass length radius *origin">
+        <inertial>
+            <xacro:insert_block name="origin"/>
+            <mass value="${mass}" />
+            <inertia 
+                ixx="${(1/12) * mass * (3*radius*radius + length*length)}"
+                ixy="0.0"
+                ixz="0.0"
+                iyy="${(1/12) * mass * (3*radius*radius + length*length)}"
+                iyz="0.0"
+                izz="${(1/2) * mass * (radius*radius)}" />
+            </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="insert_roller" params="parent reflect theta suffix wheel">
+        <joint name="rim_to_roller${wheel}${suffix}joint" type="continuous">
+            <origin xyz="${distance_to_roller_center*cos(theta)} ${distance_to_roller_center*sin(theta)} ${reflect*0.008}" rpy="0.0 0.0 ${theta-PI/2}"/>
+            <parent link="${parent}"/>
+            <child link="roller${wheel}${suffix}_link"/>
+            <axis xyz="1.0 0.0 0.0"/>
+            <dynamics friction="0.1"/>
+        </joint>
+
+        <link name="roller${wheel}${suffix}_link">
+            <visual>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <mesh filename="file://$(find axebot_description)/meshes/roller.stl"/>
+                </geometry>
+                <material name="green"/>
+            </visual>
+
+            <collision>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <mesh filename="file://$(find axebot_description)/meshes/roller.stl"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <mass value="0.003"/>
+                <inertia ixx="5.3e-8"
+                         ixy="0.0"
+                         ixz="0.0"
+                         iyy="8e-8"
+                         iyz="0.0"
+                         izz="8e-8"/>
+            </inertial>
+        </link>
+        <gazebo reference="roller${wheel}${suffix}_link">
+            <material>Gazebo/Green</material>
+            <fdir1>1 0 0"</fdir1>
+            <mu1>100</mu1>
+            <mu2>100</mu2>
+            <minDepth>0.001</minDepth>
+        </gazebo>
+    </xacro:macro>
+
+    <xacro:macro name="wheel" params="parent suffix theta">
+        <joint name="wheel${suffix}_shaft_joint" type="fixed">
+            <origin xyz="${chassis_radius*cos(theta)} ${chassis_radius*sin(theta)} 0.0" rpy="0.0 ${PI/2} ${theta+PI}"/>
+            <parent link="${parent}"/>
+            <child link="motor${suffix}_shaft_link"/>
+        </joint>
+
+        <link name="motor${suffix}_shaft_link">
+            <visual>
+                <origin xyz="0.0 0.0 -${motor_shaft_length/2}" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <cylinder radius="${motor_shaft_radius}" length="${motor_shaft_length}"/>
+                </geometry>
+                <material name="red"/>
+            </visual>
+
+            <collision>
+                <origin xyz="0.0 0.0 -${motor_shaft_length/2}" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <cylinder radius="${motor_shaft_radius}" length="${motor_shaft_length}"/>
+                </geometry>
+            </collision>
+            <xacro:inertial_cylinder mass="${shaft_mass}" radius="${motor_shaft_radius}" length="${motor_shaft_length}">
+                <origin xyz="0.0 0.0 -${motor_shaft_length/2}" rpy="0.0 0.0 0.0"/>
+            </xacro:inertial_cylinder>
+        </link>
+
+        <joint name="wheel${suffix}_joint" type="continuous">
+            <origin xyz="0.0 0.0 -${motor_shaft_length+wheel_thickness/2}" rpy="0.0 0.0 0.0"/>
+            <parent link="motor${suffix}_shaft_link"/>
+            <child link="wheel${suffix}_link"/>
+            <axis xyz="0.0 0.0 1.0"/>
+        </joint>
+
+        <link name="wheel${suffix}_link">
+            <visual>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <mesh filename="file://$(find axebot_description)/meshes/rim.stl"/>
+                </geometry>
+                <material name="grey"/>
+            </visual>
+
+            <collision>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <mesh filename="file://$(find axebot_description)/meshes/wheel-collision.dae"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <mass value="0.113"/>
+                <inertia ixx="0.000089064"
+                         ixy="0.0"
+                         ixz="0.0"
+                         iyy="0.000089064"
+                         iyz="0.0"
+                         izz="0.000173339"/>
+            </inertial>
+        </link>
+
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="1.0" theta="0" suffix="1" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="1.0" theta="${PI/6}" suffix="2" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="1.0" theta="${PI/3}" suffix="3" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="1.0" theta="${PI/2}" suffix="4" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="1.0" theta="${2*PI/3}" suffix="5" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="1.0" theta="${5*PI/6}" suffix="6" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="1.0" theta="${PI}" suffix="7" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="1.0" theta="${7*PI/6}" suffix="8" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="1.0" theta="${4*PI/3}" suffix="9" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="1.0" theta="${3*PI/2}" suffix="10" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="1.0" theta="${5*PI/3}" suffix="11" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="1.0" theta="${11*PI/6}" suffix="12" wheel="${suffix}"/>
+
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="-1.0" theta="${45*PI/180}" suffix="-1" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="-1.0" theta="${75*PI/180}" suffix="-2" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="-1.0" theta="${105*PI/180}" suffix="-3" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="-1.0" theta="${135*PI/180}" suffix="-4" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="-1.0" theta="${165*PI/180}" suffix="-5" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="-1.0" theta="${195*PI/180}" suffix="-6" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="-1.0" theta="${225*PI/180}" suffix="-7" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="-1.0" theta="${255*PI/180}" suffix="-8" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="-1.0" theta="${285*PI/180}" suffix="-9" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="-1.0" theta="${315*PI/180}" suffix="-10" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="-1.0" theta="${345*PI/180}" suffix="-11" wheel="${suffix}"/>
+        <xacro:insert_roller parent="wheel${suffix}_link" reflect="-1.0" theta="${375*PI/180}" suffix="-12" wheel="${suffix}"/>
+    </xacro:macro>
+</robot>
