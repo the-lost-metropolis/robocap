@@ -1,4 +1,6 @@
 from setuptools import find_packages, setup
+import os
+from glob import glob
 
 package_name = 'robocap_sim'
 
@@ -10,10 +12,10 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        # Include the urdf directory and its contents
-        ('share/' + package_name + '/urdf', ['urdf/frame_ultra_low_poly.stl']),
-        # If you have other files in the urdf directory, include them like this
-        # ('share/' + package_name + '/urdf', ['urdf/robot.urdf.xacro', 'urdf/inertial_macros.xacro', ...]),
+        # Include all files in the urdf directory
+        (os.path.join('share', package_name, 'urdf'), glob('urdf/*')),
+        # Include the launch directory
+        (os.path.join('share', package_name, 'launch'), glob('launch/*')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -24,7 +26,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'hello_world = robocap_sim.hello_world:main'
+            'hello_world = scripts.hello_world:main'
         ],
     },
 )
