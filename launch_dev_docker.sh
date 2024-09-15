@@ -45,13 +45,12 @@ if [ "$IS_DEV_CONTAINER" = "true" ]; then
 else
 
     # We first build the docker images
-
-    SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-    cd $SCRIPT_DIR
-    cd docker
-    docker build -f Dockerfile.rbc_dev_base -t rbc_dev_base:latest .
-    docker build -f Dockerfile.rbc_dev_ros -t rbc_dev_ros:latest .
-
+    (
+        SCRIPT_DIR=$(dirname "$(readlink -f "$0")") # Get the directory of this script
+        docker build -f docker/Dockerfile.rbc_dev_base -t rbc_dev_base:latest .
+        docker build -f docker/Dockerfile.rbc_dev_ros -t rbc_dev_ros:latest .
+        docker build -f docker/Dockerfile.rbc_dev_ros_prebuild -t rbc_dev_ros_prebuild:latest .
+    )
     cd ..
 
     # Set up ports
@@ -121,7 +120,7 @@ else
         -p ${SSH_PORT}:22 \
         -p ${WEB_PORT}:8000 \
         -v $(realpath ./):/home/developer/repo \
-        -v $(realpath ./docker/start.sh):/home/developer/start.sh \
+        -v $(realpath ./docker/entrypoint.sh):/home/developer/entrypoint.sh \
         -v $(realpath ~/.gitconfig):/home/developer/.gitconfig \
         $SSH_KEY_MOUNT \
         -e DISPLAY=:0 \
@@ -129,6 +128,6 @@ else
         -e SELF_SSH_PORT=${SSH_PORT} \
         -e SELF_WEB_PORT=${WEB_PORT} \
         -e SELF_HOSTNAME=${HOSTNAME} \
-        rbc_dev_ros:latest
+        rbc_dev_ros_prebuild:latest
 
 fi

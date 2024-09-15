@@ -24,7 +24,7 @@ RUN wget -O "/usr/share/keyrings/xpra.asc" https://xpra.org/xpra.asc \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy and apply Xpra patch
-COPY patch_xpra_clipboard.sh /usr/local/bin/patch_xpra_clipboard.sh
+COPY docker/patch_xpra_clipboard.sh /usr/local/bin/patch_xpra_clipboard.sh
 RUN chmod +x /usr/local/bin/patch_xpra_clipboard.sh && \
     /usr/local/bin/patch_xpra_clipboard.sh
 
@@ -79,11 +79,11 @@ fi\n\
 \n\
 sudo /usr/sbin/sshd\n\
 xpra start --bind-tcp=0.0.0.0:8000\n\
-tail -f /dev/null' > /home/developer/start.sh && chmod +x /home/developer/start.sh
+tail -f /dev/null' > /home/developer/entrypoint.sh && chmod +x /home/developer/entrypoint.sh
 
 # Switch to non-root user
 USER $USERNAME
 WORKDIR /home/$USERNAME
 
 # Set the startup script as the entry point
-CMD ["./start.sh"]
+CMD ["./entrypoint.sh"]

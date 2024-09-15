@@ -1,3 +1,16 @@
 FROM rbc_dev_ros:latest
 
-# TODO: Run prebuild script
+# We only want to update the build whenever the source code changes, or the way we build the code changes.
+# Thus, we COPY in the minimum amount of files necessary to build the code.
+
+# Copy in the source code
+COPY src/ /home/developer/repo/src
+
+# The ROS environment definition
+COPY docker/ros_environment.sh /home/developer/repo/docker/ros_environment.sh
+
+# The prebuild script
+COPY docker/prebuild.sh /home/developer/repo/docker/prebuild.sh
+
+# Now, we can build the code by first sourcing the ROS environment, then sourcing the prebuild script, the running the prebuild bash function.
+RUN /bin/bash -c "source /home/developer/repo/docker/ros_environment.sh && source /home/developer/repo/docker/prebuild.sh && prebuild"
