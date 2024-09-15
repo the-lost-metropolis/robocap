@@ -26,6 +26,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-rosdep \
     && rm -rf /var/lib/apt/lists/*
 
+# Actual packages
+# Colcon and rosdep
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ros-humble-ign-ros2-control \
+    ros-humble-rqt-robot-steering \
+    && rm -rf /var/lib/apt/lists/*
+
 # Initialize rosdep
 RUN /usr/bin/rosdep init
 
