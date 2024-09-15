@@ -33,9 +33,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-humble-rqt-robot-steering \
     && rm -rf /var/lib/apt/lists/*
 
-# Initialize rosdep
-RUN /usr/bin/rosdep init
-
 # Switch back to the non-root user
 USER developer
 

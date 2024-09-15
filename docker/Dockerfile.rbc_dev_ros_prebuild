@@ -1,0 +1,3 @@
+FROM rbc_dev_ros:latest
+
+# TODO: Run prebuild script
