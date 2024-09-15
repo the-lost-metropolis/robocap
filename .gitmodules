@@ -1,3 +1,0 @@
-[submodule "src/omnidirectional_controllers"]
-	path = src/omnidirectional_controllers
-	url = https://github.com/the-lost-metropolis/omnidirectional_controllers
