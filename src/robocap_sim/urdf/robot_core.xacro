@@ -20,7 +20,7 @@
     <link name="chassis">
         <visual>
             <geometry>
-                <mesh filename="package://rbc_base/meshes/frame_ultra_low_poly.stl" scale="0.001 0.001 0.001"/>
+                <mesh filename="package://robocap_sim/urdf/frame_ultra_low_poly.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <material name="white"/>
         </visual>
