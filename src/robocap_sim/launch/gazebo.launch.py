@@ -34,11 +34,11 @@ def generate_launch_description():
         output='screen'
     )
 
-    # Spawn robot in Ignition Gazebo
+    # Spawn robot in Ignition Gazebo with a z-offset of 0.1 meter
     spawn_robot = Node(
         package='ros_gz_sim',
         executable='create',
-        arguments=['-file', urdf_file, '-name', 'robot'],
+        arguments=['-file', urdf_file, '-name', 'robot', '-z', '0.1'],
         output='screen'
     )
 

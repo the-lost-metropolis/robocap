@@ -16,14 +16,14 @@
         <origin xyz="0 0 0"/>
     </joint>
 
-    <!-- chassis description goes here. It describes the chassis of the bot which is a 54cm x 54cm x 150cm box -->
+    <!-- chassis description goes here -->
     <link name="chassis">
         <visual>
-            <origin xyz="0 0 0.75" rpy="0 0 0"/> 
             <geometry>
+                <!-- This works in Rviz -->
                 <!-- <mesh filename="package://robocap_sim/urdf/frame_ultra_low_poly.stl" scale="0.001 0.001 0.001"/> -->
-                        <!-- Offset the origin by half the height -->
-                    <box size="0.54 0.54 1.5"/>
+                <!-- This works in gazebo -->
+                <mesh filename="$(find robocap_sim)/urdf/frame_ultra_low_poly.stl" scale="0.001 0.001 0.001"/>
             </geometry>
             <material name="white"/>
         </visual>
@@ -198,9 +198,9 @@
         </actuator>
     </transmission>
 
-    <!-- <gazebo>
+    <gazebo>
         <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
         </plugin>
-    </gazebo> -->
+    </gazebo>
 
 </robot>
