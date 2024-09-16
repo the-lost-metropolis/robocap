@@ -6,6 +6,9 @@ FROM rbc_dev_ros:latest
 # Copy in the source code
 COPY src/ /home/developer/repo/src
 
+# Ensure that developer has permissions for the repo directory and subdirectories
+RUN sudo chown -R developer:developer /home/developer
+
 # The ROS environment definition
 COPY docker/ros_environment.sh /home/developer/repo/docker/ros_environment.sh
 

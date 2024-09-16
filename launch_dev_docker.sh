@@ -29,8 +29,18 @@ wait_for_ssh() {
         echo "SSH server not ready yet. Retrying..."
         sleep 1
     done
-    echo -e "${GREEN}SSH server is now fully available on port ${SSH_PORT}.${NC}"
 }
+
+# Function to handle Ctrl+C (SIGINT)
+cleanup() {
+    echo -e "${BLUE}Caught SIGINT, cleaning up...${NC}"
+    # Kill any background jobs (e.g., polling process)
+    pkill -P $$
+    exit 1
+}
+
+# Set the trap for SIGINT (Ctrl+C)
+trap cleanup SIGINT
 
 # Parse command-line arguments
 HEADLESS=false
@@ -51,7 +61,6 @@ else
         docker build -f docker/Dockerfile.rbc_dev_ros -t rbc_dev_ros:latest .
         docker build -f docker/Dockerfile.rbc_dev_ros_prebuild -t rbc_dev_ros_prebuild:latest .
     )
-    cd ..
 
     # Set up ports
     SSH_PORT=2222
@@ -82,11 +91,9 @@ else
     fi
 
     # Print information
-    echo -e "${BLUE}Launching Docker container on:${NC}"
-    echo -e "${GREEN}SSH port: ${SSH_PORT}${NC}"
-    echo -e "${GREEN}Web port: ${WEB_PORT}${NC}"
-    echo -e "${GREEN}GUI URL: http://${HOSTNAME}:${WEB_PORT}${NC}"
-    echo -e "${GREEN}Using UID: ${HOST_UID}, GID: ${HOST_GID}${NC}"
+    echo Launching Docker with the following configuration:
+    echo -e "Hostname: ${HOSTNAME}, SSH port: ${SSH_PORT}, Web port: ${WEB_PORT}"
+    echo -e "UID: ${HOST_UID}, GID: ${HOST_GID}"
 
     # Start polling for SSH server availability in the background
     ( 
@@ -112,7 +119,14 @@ else
         else
             echo -e "${GREEN}Container running in headless mode. VSCode not launched.${NC}"
         fi
+        sleep 2
+        echo -e "✅ ${GREEN}Development environment is ready. To manually start a remote session into the container, run \"./remote_vscode.sh ${SSH_PORT} ${HOSTNAME}\", or to open the remote GUI, visit http://${HOSTNAME}:${WEB_PORT}.${NC}"
     ) &
+
+    # Capture the PID of the background process
+    BG_PID=$!
+
+    echo $(pwd)
 
     # Launch the Docker container in the foreground
     docker run -it --rm \
@@ -130,4 +144,8 @@ else
         -e SELF_HOSTNAME=${HOSTNAME} \
         rbc_dev_ros_prebuild:latest
 
+    # Kill the background process if it exists
+    if [ -n "$BG_PID" ]; then
+        kill $BG_PID
+    fi
 fi
