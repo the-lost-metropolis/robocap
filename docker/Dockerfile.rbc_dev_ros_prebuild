@@ -1,4 +1,5 @@
-FROM rbc_dev_ros:latest
+ARG ROS_IMAGE=rbc_dev_ros:latest
+FROM ${ROS_IMAGE}
 
 # We only want to update the build whenever the source code changes, or the way we build the code changes.
 # Thus, we COPY in the minimum amount of files necessary to build the code.

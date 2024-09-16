@@ -54,12 +54,21 @@ if [ "$IS_DEV_CONTAINER" = "true" ]; then
     echo "You are already in the Docker container."
 else
 
+    # Generate a short hash based on the current repository path
+    REPO_PATH=$(realpath "$(dirname "$0")")
+    REPO_HASH=$(echo -n "$REPO_PATH" | sha256sum | cut -c1-8)
+
+    # Modify image names to include the hash
+    BASE_IMAGE="rbc_dev_base:${REPO_HASH}"
+    ROS_IMAGE="rbc_dev_ros:${REPO_HASH}"
+    ROS_PREBUILD_IMAGE="rbc_dev_ros_prebuild:${REPO_HASH}"
+
     # We first build the docker images
     (
         SCRIPT_DIR=$(dirname "$(readlink -f "$0")") # Get the directory of this script
-        docker build -f docker/Dockerfile.rbc_dev_base -t rbc_dev_base:latest .
-        docker build -f docker/Dockerfile.rbc_dev_ros -t rbc_dev_ros:latest .
-        docker build -f docker/Dockerfile.rbc_dev_ros_prebuild -t rbc_dev_ros_prebuild:latest .
+        docker build -f docker/Dockerfile.rbc_dev_base -t $BASE_IMAGE .
+        docker build -f docker/Dockerfile.rbc_dev_ros -t $ROS_IMAGE --build-arg BASE_IMAGE=$BASE_IMAGE .
+        docker build -f docker/Dockerfile.rbc_dev_ros_prebuild -t $ROS_PREBUILD_IMAGE --build-arg ROS_IMAGE=$ROS_IMAGE .
     )
 
     # Set up ports
@@ -126,8 +135,6 @@ else
     # Capture the PID of the background process
     BG_PID=$!
 
-    echo $(pwd)
-
     # Launch the Docker container in the foreground
     docker run -it --rm \
         --user ${HOST_UID}:${HOST_GID} \
@@ -142,7 +149,7 @@ else
         -e SELF_SSH_PORT=${SSH_PORT} \
         -e SELF_WEB_PORT=${WEB_PORT} \
         -e SELF_HOSTNAME=${HOSTNAME} \
-        rbc_dev_ros_prebuild:latest
+        $ROS_PREBUILD_IMAGE
 
     # Kill the background process if it is still running
     if ps -p $BG_PID > /dev/null; then

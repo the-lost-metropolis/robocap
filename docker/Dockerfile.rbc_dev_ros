@@ -1,7 +1,8 @@
 # ROS Image: Based on the Remote Development Setup
 
 # Use the previously built base image
-FROM rbc_dev_base:latest
+ARG BASE_IMAGE=rbc_dev_base:latest
+FROM ${BASE_IMAGE}
 
 # Switch to root user to install packages
 USER root
