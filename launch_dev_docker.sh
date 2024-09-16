@@ -144,8 +144,8 @@ else
         -e SELF_HOSTNAME=${HOSTNAME} \
         rbc_dev_ros_prebuild:latest
 
-    # Kill the background process if it exists
-    if [ -n "$BG_PID" ]; then
+    # Kill the background process if it is still running
+    if ps -p $BG_PID > /dev/null; then
         kill $BG_PID
     fi
 fi
