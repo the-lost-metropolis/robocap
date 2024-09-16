@@ -15,9 +15,6 @@ fi
 printenv | sed 's/^\(.*\)$/export \1/' > /home/developer/project_env.sh
 echo "source /home/developer/project_env.sh" >> /home/developer/.bashrc
 
-sudo apt-get update
-
 sudo /usr/sbin/sshd
 xpra start --bind-tcp=0.0.0.0:8000
 tail -f /dev/null
-

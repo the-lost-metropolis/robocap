@@ -15,9 +15,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-humble-desktop \
     python3-argcomplete \
     ros-humble-ros-gz \
-    # Additional
-    ros-humble-urdf-tutorial \
-    ros-humble-gazebo-ros2-control \
     && rm -rf /var/lib/apt/lists/*
 
 # Setup environment for the non-root user
@@ -27,6 +24,8 @@ RUN echo "source /opt/ros/humble/setup.bash" >> /home/developer/.bashrc
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-colcon-common-extensions \
     && rm -rf /var/lib/apt/lists/*
+
+
 
 # Switch back to the non-root user
 USER developer
