@@ -7,9 +7,6 @@ prebuild() {
         sudo rosdep init
         rosdep update
         rosdep install --from-paths src --ignore-src -r -y
-        # Print user, cwd
-        echo "User: $(whoami)"
-        echo "CWD: $(pwd)"
         colcon build --symlink-install --event-handlers console_direct+
     )
 }
