@@ -134,7 +134,7 @@ else
         -p ${SSH_PORT}:22 \
         -p ${WEB_PORT}:8000 \
         -v $(realpath ./):/home/developer/repo \
-        -v $(realpath ./docker/entrypoint.sh):/home/developer/entrypoint.sh \
+        -v $(realpath ./docker/dev_entrypoint.sh):/home/developer/entrypoint.sh \
         -v $(realpath ~/.gitconfig):/home/developer/.gitconfig \
         $SSH_KEY_MOUNT \
         -e DISPLAY=:0 \

@@ -17,12 +17,12 @@ fi
 printenv | sed 's/^\(.*\)$/export \1/' > /home/developer/project_env.sh
 echo "source /home/developer/project_env.sh" >> /home/developer/.bashrc
 
-# Source shell setup, which gives sources ROS2 underlay (and if available, overlay / workspace), and environmental variables
-source /home/developer/repo/.vscode/shell_setup.sh
+# # Source shell setup, which gives sources ROS2 underlay (and if available, overlay / workspace), and environmental variables
+# source /home/developer/repo/.vscode/shell_setup.sh
 
-# Install workspace dependencies, build workspace
-source /home/developer/repo/docker/prebuild.sh
-prebuild # In the case that we are launching rbc_dev_ros_prebuild instead of rbc_dev_ros, some dependenices are already installed / some packages are already built whichs saves time
+# # Install workspace dependencies, build workspace
+# source /home/developer/repo/docker/prebuild.sh
+# prebuild # In the case that we are launching rbc_dev_ros_prebuild instead of rbc_dev_ros, some dependenices are already installed / some packages are already built whichs saves time
 
 sudo /usr/sbin/sshd
 xpra start --bind-tcp=0.0.0.0:8000
