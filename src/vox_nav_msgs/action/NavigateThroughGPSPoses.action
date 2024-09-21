@@ -1,0 +1,9 @@
+#goal definition
+sensor_msgs/NavSatFix[] gps_poses
+---
+#result definition
+std_msgs/Empty result
+---
+geometry_msgs/PoseStamped current_pose
+builtin_interfaces/Duration navigation_time
+float32 distance_remaining

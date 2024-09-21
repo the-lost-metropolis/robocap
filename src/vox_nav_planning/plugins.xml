@@ -1,0 +1,37 @@
+<class_libraries>
+  <library path="optimal_elevation_planner">
+    <class type="vox_nav_planning::OptimalElevationPlanner" base_class_type="vox_nav_planning::PlannerCore">
+      <description>TODO(fetullah.atas)</description>
+    </class>
+  </library>
+  <library path="osm_elevation_planner">
+    <class type="vox_nav_planning::OSMElevationPlanner" base_class_type="vox_nav_planning::PlannerCore">
+      <description>TODO(fetullah.atas)</description>
+    </class>
+  </library>
+  <library path="elevation_planner">
+    <class type="vox_nav_planning::ElevationPlanner" base_class_type="vox_nav_planning::PlannerCore">
+      <description>TODO(fetullah.atas)</description>
+    </class>
+  </library>
+  <library path="elevation_control_planner">
+    <class type="vox_nav_planning::ElevationControlPlanner" base_class_type="vox_nav_planning::PlannerCore">
+      <description>TODO(fetullah.atas)</description>
+    </class>
+  </library>
+  <library path="se2_planner">
+    <class type="vox_nav_planning::SE2Planner" base_class_type="vox_nav_planning::PlannerCore">
+      <description>TODO(fetullah.atas)</description>
+    </class>
+  </library>
+  <library path="se3_planner">
+    <class type="vox_nav_planning::SE3Planner" base_class_type="vox_nav_planning::PlannerCore">
+      <description>TODO(fetullah.atas)</description>
+    </class>
+  </library>
+  <library path="polytunnel_planner">
+    <class type="vox_nav_planning::PolyTunnelPlanner" base_class_type="vox_nav_planning::PlannerCore">
+      <description>TODO(fetullah.atas)</description>
+    </class>
+  </library>
+</class_libraries>

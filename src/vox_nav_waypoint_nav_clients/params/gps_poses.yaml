@@ -1,0 +1,7 @@
+navigate_through_gps_poses_client_node:
+  ros__parameters:
+    gps_poses: [pose0,pose1,pose2]
+    #lat, long
+    pose0: [59.66429317, 10.76302156]
+    pose1: [59.66440119, 10.76302204]
+    pose2: [59.66448859, 10.76310586]

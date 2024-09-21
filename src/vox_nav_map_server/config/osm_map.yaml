@@ -1,0 +1,125 @@
+osm_map_manager_rclcpp_node:
+  ros__parameters:
+    osm_road_topologies_pcd_filename: /home/atas/ros2_ws/src/VOX_NAV_FRIENDS/vox_nav/vox_nav_map_server/maps/osm_road_topologies.pcd
+    osm_road_colliders_pcd_filename: /home/atas/ros2_ws/src/VOX_NAV_FRIENDS/vox_nav/vox_nav_map_server/maps/osm_road_colliders.pcd
+    osm_buildings_pcd_filename: /home/atas/ros2_ws/src/VOX_NAV_FRIENDS/vox_nav/vox_nav_map_server/maps/osm_buildings.pcd
+    # PCD PREPROCESS PARAMS
+    downsample_leaf_size: 0.25   
+    publish_frequency: 15                                                     # Set to smaller if you do not want downsample pointclouds of the map
+    pcd_map_transform:                                                        # Apply an OPTIONAL rigid-body transrom to pcd file, leave to all zeros if not wished
+      translation:                                                            # Unit is meters
+        x: -0.0
+        y: 0.0
+        z: 0.0
+      rotation:                                                               # intrinsic rotation X-Y-Z (r-p-y)sequence, if you acquired map in camera frmae and want to represent
+                                                                              # it in base_link or lidar frmae, you can specify the rotation here, UNit is Radians
+        r: 0.0 #3.14
+        p: 0.0 #1.57
+        y: 0.0 # 1.57
+    map_frame_id: "map"                                                      # This should be consistent with Gloabl EKF node , in robot_localization
+    utm_frame_id: "utm"
+    map_datum:                                                               # Datum coordinates of map is used to geo-reference the map 
+                                                                             # If you are building a map with a SLAM method, you need to get a reading from GPS and absolute headed IMU
+                                                                             # just before you start to build the map. See for example 
+      latitude: 59.665905168154474
+      longitude: 10.777607911625102
+      altitude: 0.0
+      quaternion:
+        x: 0.0
+        y: 0.0
+        z: 0.0
+        w: 1.0
+
+vox_nav_planner_server_rclcpp_node:
+  ros__parameters:
+    planner_plugin: "OSMElevationPlanner"    # other options: "SE2Planner", "ElevationPlanner", "OptimalElevationPlanner"
+    expected_planner_frequency: 1.0
+    planner_name: "InformedSGCP"                            
+    planner_timeout: 10.0
+    interpolation_parameter: 0               # set to 0 if you wanna disable interpolating and smooting, otherwise 25 is a good default value                    
+    robot_body_dimens:
+      x: 1.2
+      y: 1.2
+      z: 0.8
+    robot_mesh_path: ""
+    OSMElevationPlanner: 
+      # Available Planners Include: PRMstar,LazyPRMstar,RRTstar,RRTsharp,RRTXstatic,InformedRRTstar,BITstar, 
+                                 #  ABITstar,AITstar,CForest,LBTRRT,SST,TRRT,SPARS,SPARStwo,FMT,AnytimePathShortening
+      plugin: "vox_nav_planning::OSMElevationPlanner"    # PRMstar: Reccomended
+      se2_space: "SE2"                                   # "DUBINS","REEDS", "SE2" ### PS. Use DUBINS OR REEDS for Ackermann
+      rho: 2.0                                           # Curve radius for reeds and dubins only
+      goal_tolerance: 2.5
+      state_space_boundries:
+        minx: -100.0
+        maxx:  100.0
+        miny: -100.0
+        maxy:  100.0
+        minz: -5.0
+        maxz:  10.0
+
+vox_nav_controller_server_rclcpp_node:
+   ros__parameters: 
+      controller_plugin: "MPCControllerAcadoROS"                              # other options: non
+      controller_frequency: 100.0                                             # acado is really fast(+1000.0Hz) casadi can deal up to just 20.0Hz maybe
+      goal_tolerance_distance: 0.2                                            # in meters, once smaller than this one controller tries to minimize orientation error
+      goal_tolerance_orientation: 0.2                                         # in radians, once smaller than this value,controller exits with success
+      transform_timeout: 0.01                                                 # seconds, this is used to regulate lookUpTransfrom calls from tf2
+      global_plan_look_ahead_distance: 5.0                                    # look this amount of meters from current robot pose to remaining global path
+      ref_traj_se2_space: "REEDS"                                             # "DUBINS","REEDS", "SE2" ### PS. Use DUBINS OR REEDS for Ackermann
+      rho: 3.0                                                                # Curve radius form reeds and dubins only
+      robot_radius: 1.25                                                          
+
+      MPCControllerCasadiROS:
+         plugin: "mpc_controller_casadi::MPCControllerCasadiROS"
+         N: 8                                                                 # timesteps in MPC Horizon
+         DT: 0.2                                                              # discretization time between timesteps(s)
+         L_F: 0.67                                                            # distance from CoG to front axle(m)
+         L_R: 0.67                                                            # distance from CoG to rear axle(m)
+         V_MIN: -0.4                                                          # min / max velocity constraint(m / s)
+         V_MAX: 0.4
+         A_MIN: -0.1                                                          # min / max acceleration constraint(m / s ^ 2)
+         A_MAX: 0.1
+         DF_MIN: -0.1                                                         # min / max front steer angle constraint(rad)
+         DF_MAX: 0.1
+         A_DOT_MIN: -0.5                                                      # min / max jerk constraint(m / s ^ 3)
+         A_DOT_MAX: 0.5
+         DF_DOT_MIN: -0.5                                                     # min / max front steer angle rate constraint(rad / s)
+         DF_DOT_MAX: 0.5
+         Q: [10.0, 10.0, 0.1, 0.1]                                            # weights on x, y, psi, v.
+         R: [10.0, 100.0]                                                     # weights on jerk and slew rate(steering angle derivative)
+         debug_mode: False                                                    # enable/disable debug messages
+         params_configured: True
+         obstacle_cost: 50.0
+         max_obstacles: 0
+
+      MPCControllerAcadoROS:
+         plugin: "mpc_controller_acado::MPCControllerAcadoROS"
+         N: 20                                                                # timesteps in MPC Horizon
+         Ni: 1
+         DT: 0.2                                                              # discretization time between timesteps(s)
+         L_F: 0.67                                                            # distance from CoG to front axle(m)
+         L_R: 0.67                                                            # distance from CoG to rear axle(m)
+         V_MIN: -0.4                                                          # min / max velocity constraint(m / s)
+         V_MAX: 0.4
+         A_MIN: -0.1                                                          # min / max acceleration constraint(m / s ^ 2)
+         A_MAX: 0.1
+         DF_MIN: -0.2                                                         # min / max front steer angle constraint(rad)
+         DF_MAX: 0.2
+         Q: [1.0, 1.0, 0.0, 0.0, 0.15]                                        # weights on x, y, psi, and v, obstacle_cost.
+         R: [10.0, 10.0]                                                      # weights on input acc and df, acceleration and steering angle
+         debug_mode: False                                                    # enable/disable debug messages
+         params_configured: True
+         max_obstacles: 6
+         full_ackerman: False
+
+      plan_refiner_plugin: "TraversabilityBasedPlanRefiner"
+      plan_refiner_frequency: 5.5
+      TraversabilityBasedPlanRefiner:
+        plugin: "vox_nav_control::TraversabilityBasedPlanRefiner"
+        local_goal_max_nn_dist: 5.6
+        supervoxel_disable_transform: false
+        supervoxel_resolution: 0.2
+        supervoxel_seed_resolution: 0.4
+        supervoxel_color_importance: 0.0
+        supervoxel_spatial_importance: 1.0
+        supervoxel_normal_importance: 0.0

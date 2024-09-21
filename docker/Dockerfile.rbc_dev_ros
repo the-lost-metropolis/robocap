@@ -18,10 +18,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-humble-ros-gz \
     && rm -rf /var/lib/apt/lists/*
 
-# Install CasADi
+# Install non-ROS dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     coinor-libipopt-dev \
+    libompl-dev \
     && rm -rf /var/lib/apt/lists/*
+
+# Install CasADi
 RUN git clone https://github.com/casadi/casadi.git && \
     cd casadi && \
     mkdir build && \
