@@ -22,11 +22,11 @@ echo "source /home/developer/project_env.sh" >> /home/developer/.bashrc
 
 # # Install workspace dependencies, build workspace
 # source /home/developer/repo/docker/prebuild.sh
-(
-    source /home/developer/repo/.vscode/shell_setup.sh
-    cd /home/developer/repo
-    colcon build --symlink-install --event-handlers console_direct+
-)
+# (
+#     source /home/developer/repo/.vscode/shell_setup.sh
+#     cd /home/developer/repo
+#     colcon build --symlink-install --event-handlers console_direct+
+# )
 
 sudo /usr/sbin/sshd
 xpra start --bind-tcp=0.0.0.0:8000

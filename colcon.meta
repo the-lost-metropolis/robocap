@@ -9,6 +9,7 @@
         },
         "ACADO": {
             "cmake-args": [
+                "-DCMAKE_BUILD_TYPE=Release",
                 "-DCMAKE_CXX_FLAGS=-w"
             ]
         }
