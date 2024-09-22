@@ -5,6 +5,11 @@ source /usr/share/colcon_cd/function/colcon_cd.sh # Source colcon_cd
 export _colcon_cd_root=/opt/ros/humble/ # Set colcon_cd root
 source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash # Source colcon_argcomplete
 
+# Source ACADO Toolkit
+if [ -f /home/developer/acado/build/acado_env.sh ]; then
+    source /home/developer/acado/build/acado_env.sh
+fi
+
 source_workspace() { # Function to source workspace if available
     if [ -f /home/developer/repo/install/setup.bash ]; then
         source /home/developer/repo/install/setup.bash

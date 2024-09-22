@@ -6,12 +6,6 @@
                 "-DACADO_CODE_IS_READY=ON",
                 "-DWITH_IPOPT=true"
             ]
-        },
-        "ACADO": {
-            "cmake-args": [
-                "-DCMAKE_BUILD_TYPE=Release",
-                "-DCMAKE_CXX_FLAGS=-w"
-            ]
         }
     },
     "build": {

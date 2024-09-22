@@ -10,11 +10,48 @@ COPY src/ /home/developer/repo/src
 # Ensure that developer has permissions for the repo directory and subdirectories
 RUN sudo chown -R developer:developer /home/developer
 
-# The ROS environment definition
-COPY docker/ros_environment.sh /home/developer/repo/docker/ros_environment.sh
+RUN sudo apt-get update && sudo apt-get install -y \
+    ros-humble-joint-state-publisher-gui \
+    ros-humble-ign-ros2-control \
+    ros-humble-octomap-msgs \
+    ros-humble-pcl-ros \
+    ros-humble-robot-localization \
+    libeigen3-dev \
+    ros-humble-libg2o \
+    libopencv-dev \
+    libyaml-cpp-dev \
+    libsqlite3-dev \
+    cmake \
+    ros-humble-control-msgs \
+    ros-humble-effort-controllers \
+    ros-humble-gazebo-ros2-control \
+    ros-humble-gazebo-ros \
+    ros-humble-hardware-interface \
+    ros-humble-joint-trajectory-controller \
+    ros-humble-joint-state-broadcaster \
+    ros-humble-ros2-control \
+    ros-humble-ros2-controllers \
+    ros-humble-velocity-controllers \
+    libgoogle-glog-dev \
+    libfcl-dev \
+    ros-humble-octomap \
+    ros-humble-ompl \
+    ros-humble-behaviortree-cpp-v3 \
+    ros-humble-controller-manager \
+    ros-humble-ros2-control-test-assets \
+    ros-humble-backward-ros \
+    ros-humble-controller-interface \
+    ros-humble-realtime-tools \
+    ros-humble-generate-parameter-library \
+    python3-pytest \
+    ros-humble-rqt-robot-steering \
+    && sudo rm -rf /var/lib/apt/lists/*
 
-# The cache_deps script
-COPY docker/prebuild.sh /home/developer/repo/docker/prebuild.sh
+# # The ROS environment definition
+# COPY docker/ros_environment.sh /home/developer/repo/docker/ros_environment.sh
 
-# Now, we can build the code by first sourcing the ROS environment, then sourcing the cache_deps script, the running the cache_deps bash function.
-RUN /bin/bash -c "source /home/developer/repo/docker/ros_environment.sh && source /home/developer/repo/docker/prebuild.sh && cache_deps"
+# # The cache_deps script
+# COPY docker/prebuild.sh /home/developer/repo/docker/prebuild.sh
+
+# # Now, we can build the code by first sourcing the ROS environment, then sourcing the cache_deps script, the running the cache_deps bash function.
+# RUN /bin/bash -c "source /home/developer/repo/docker/ros_environment.sh && source /home/developer/repo/docker/prebuild.sh && cache_deps"
