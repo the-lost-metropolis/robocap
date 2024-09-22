@@ -22,6 +22,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN apt-get update && apt-get install -y --no-install-recommends \
     coinor-libipopt-dev \
     libompl-dev \
+    libmosquitto-dev \
+    libmosquittopp-dev \
+    libfcl0.7 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install CasADi
@@ -34,15 +37,6 @@ RUN git clone https://github.com/casadi/casadi.git && \
     make install && \
     cd ../.. && \
     rm -rf casadi
-
-# Install ACADO Toolkit
-RUN git clone -b stable https://github.com/acado/acado.git && \
-    cd acado && \
-    mkdir build && \
-    cd build && \
-    cmake .. -DCMAKE_BUILD_TYPE=Release && \
-    make && \
-    make install
 
 # Setup environment for the non-root user
 RUN echo "source /opt/ros/humble/setup.bash" >> /home/developer/.bashrc
