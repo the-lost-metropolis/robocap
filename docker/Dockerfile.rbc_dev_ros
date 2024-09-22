@@ -42,10 +42,7 @@ RUN git clone -b stable https://github.com/acado/acado.git && \
     cd build && \
     cmake .. -DCMAKE_BUILD_TYPE=Release && \
     make && \
-    make install && \
-    cd ../.. && \
-    mv acado/build /opt/acado && \
-    rm -rf acado
+    make install
 
 # Setup environment for the non-root user
 RUN echo "source /opt/ros/humble/setup.bash" >> /home/developer/.bashrc
