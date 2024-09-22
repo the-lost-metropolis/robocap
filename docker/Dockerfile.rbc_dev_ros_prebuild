@@ -45,6 +45,8 @@ RUN sudo apt-get update && sudo apt-get install -y \
     ros-humble-generate-parameter-library \
     python3-pytest \
     ros-humble-rqt-robot-steering \
+    ros-humble-gazebo-ros-pkgs \
+    ros-humble-camera-info-manager \
     && sudo rm -rf /var/lib/apt/lists/*
 
 # # The ROS environment definition
