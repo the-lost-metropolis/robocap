@@ -1,0 +1,27 @@
+<class_libraries>
+
+  <library path="mpc_controller_casadi">
+    <class type="mpc_controller_casadi::MPCControllerCasadiROS" base_class_type="vox_nav_control::ControllerCore">
+      <description>TODO(fetullah.atas)</description>
+    </class>
+  </library>
+
+  <library path="mpc_controller_acado">
+    <class type="mpc_controller_acado::MPCControllerAcadoROS" base_class_type="vox_nav_control::ControllerCore">
+      <description>TODO(fetullah.atas)</description>
+    </class>
+  </library>
+
+  <library path="lyapunov_controller">
+    <class type="lyapunov_controller::LyapunovControllerROS" base_class_type="vox_nav_control::ControllerCore">
+      <description>TODO(fetullah.atas)</description>
+    </class>
+  </library>
+
+  <library path="traversability_based_plan_refiner">
+    <class type="vox_nav_control::TraversabilityBasedPlanRefiner" base_class_type="vox_nav_control::PlanRefinerCore">
+      <description>TODO(fetullah.atas)</description>
+    </class>
+  </library>
+
+</class_libraries>
