@@ -4,8 +4,8 @@ FROM ${ROS_IMAGE}
 # We only want to update the build whenever the source code changes, or the way we build the code changes.
 # Thus, we COPY in the minimum amount of files necessary to build the code.
 
-# Copy in the source code
-COPY src/ /home/developer/repo/src
+# # Copy in the source code
+# COPY src/ /home/developer/repo/src
 
 # Ensure that developer has permissions for the repo directory and subdirectories
 RUN sudo chown -R developer:developer /home/developer
