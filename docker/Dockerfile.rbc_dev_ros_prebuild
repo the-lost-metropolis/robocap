@@ -24,8 +24,8 @@ RUN sudo apt-get update && sudo apt-get install -y \
     cmake \
     ros-humble-control-msgs \
     ros-humble-effort-controllers \
-    ros-humble-gazebo-ros2-control \
-    ros-humble-gazebo-ros \
+    # ros-humble-gazebo-ros2-control \
+    # ros-humble-gazebo-ros \
     ros-humble-hardware-interface \
     ros-humble-joint-trajectory-controller \
     ros-humble-joint-state-broadcaster \
@@ -45,9 +45,9 @@ RUN sudo apt-get update && sudo apt-get install -y \
     ros-humble-generate-parameter-library \
     python3-pytest \
     ros-humble-rqt-robot-steering \
-    ros-humble-gazebo-ros-pkgs \
+    # ros-humble-gazebo-ros-pkgs \
     ros-humble-camera-info-manager \
-    && sudo rm -rf /var/lib/apt/lists/*
+    && sudo rm -rf /var/lib/apt/lists/* 
 
 # # The ROS environment definition
 # COPY docker/ros_environment.sh /home/developer/repo/docker/ros_environment.sh
